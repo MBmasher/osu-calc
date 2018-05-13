@@ -79,8 +79,9 @@ def pp_calc(aim, speed, b, misses, c100, c50, used_mods=mods(), combo=0xFFFF, sc
 
     combo_break = math.pow(combo, 0.8) / math.pow(b.max_combo, 0.8)
 
-    fl_bonus = 1 + min(500 / 900.0, total_hits / 900.0) + (
-        (total_hits - 500) / 600.0 if total_hits > 500 else 0)
+    fl_bonus = (1 + 0.35 * min(1.0, total_hits / 250.0)
+                + 0.3 * (min((total_hits - 250) / 250.0, 1.0) if total_hits > 250 else 0)
+                + ((total_hits - 500) / 1200.0 if total_hits > 500 else 0))
     old_fl_bonus = 1.45 * length_bonus
 
     aim_value *= length_bonus

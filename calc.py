@@ -126,8 +126,6 @@ def return_values(c100_s, c50_s, misses_s, combo_s, file_name, mod_s):
 
     map = Beatmap(file)
 
-    print map.ar
-
     if combo_s == "":
         combo = map.max_combo
     else:

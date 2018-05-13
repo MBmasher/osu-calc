@@ -1,6 +1,7 @@
 import Tkinter
 import ttk
 import calc
+import sys
 
 
 # Function used to kill the program entirely.
