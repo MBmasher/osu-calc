@@ -6,37 +6,6 @@ import b_info
 import configparser
 from beatmap import Beatmap
 
-'''
-parser = argparse.ArgumentParser()
-feature = False
-mod_s = ""
-c100 = 0
-c50 = 0
-misses = 0
-sv = 1
-acc = 0
-combo = 0
-parser.add_argument('file', help='File or url. If url provided use -l flag')
-parser.add_argument('-l', help='Flag if url provided', action='store_true')
-parser.add_argument('-acc', help='Accuracy', metavar="acc%", default=0)
-parser.add_argument('-c100', help='Number of 100s', metavar="100s", default=0)
-parser.add_argument('-c50', help='Number of 50s', metavar="50s", default=0)
-parser.add_argument('-m', help='Number of misses', metavar="miss", default=0, dest='misses')
-parser.add_argument('-c', help='Max combo', metavar="combo", default=0, dest='combo')
-parser.add_argument('-sv', help='Score version 1 or 2', metavar="sv", default=1)
-parser.add_argument('-mods', help='Mod string eg. HDDT', metavar="mods", default="")
-args = parser.parse_args()
-c100 = int(args.c100)
-c50 = int(args.c50)
-misses = int(args.misses)
-combo = int(args.combo)
-acc = float(args.acc)
-sv = int(args.sv)
-mod_s = args.mods.upper()
-feature = args.l
-file_name = ""
-'''
-
 try:
     f = open('keys.cfg');
     config = configparser.ConfigParser()
@@ -167,11 +136,7 @@ def return_values(c100_s, c50_s, misses_s, combo_s, file_name, mod_s):
     mod_string = mod_str(mod)
     map.apply_mods(mod)
     diff = diff_calc.main(map)
-    pp, aim_value, speed_value, acc_value, fl_bonus, old_fl_bonus, old_pp, no_fl_pp = pp_calc.pp_calc(diff[0], diff[1],
-                                                                                                      diff[3],
-                                                                                                      misses,
-                                                                                                      c100, c50, mod,
-                                                                                                      combo)
+    pp, aim_value, speed_value, acc_value = pp_calc.pp_calc(diff[0], diff[1], diff[3], misses, c100, c50, mod, combo)
 
     title = map.artist + " - " + map.title + "[" + map.version + "]"
     if mod_string != "":
@@ -190,11 +155,7 @@ def return_values(c100_s, c50_s, misses_s, combo_s, file_name, mod_s):
     aim_vs = "Aim Value: {:.2f}PP\n".format(aim_value)
     speed_vs = "Speed Value: {:.2f}PP\n".format(speed_value)
     acc_vs = "Acc Value: {:.2f}PP\n\n".format(acc_value)
-    fl_bs = "Flashlight Aim Bonus: {:.5f}x\n".format(fl_bonus)
-    old_fl_bs = "Old Flashlight Aim Bonus: {:.5f}x\n\n".format(old_fl_bonus)
     pp_s = "Performance: {:.2f}PP\n".format(pp.pp)
-    old_pp_s = "Old Performance: {:.2f}PP\n".format(old_pp)
-    no_fl_pp_s = "No FL Performance: {:.2f}PP".format(no_fl_pp)
 
     return (map_s + difficulty_settings + stars + acc + circle_s + slider_s + spinner_s + object_s
-            + comb_s + miss_s + aim_vs + speed_vs + acc_vs + fl_bs + old_fl_bs + pp_s + old_pp_s + no_fl_pp_s)
+            + comb_s + miss_s + aim_vs + speed_vs + acc_vs + pp_s)
