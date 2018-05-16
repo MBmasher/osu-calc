@@ -3,4 +3,10 @@ osu! calc is a performance point(PP) calculator for the game osu! This program o
 
 # Usage
 
-This program is written in python and requires version 2.7. To use, just open the gui.py file.
+This program is written in python and requires version 2.7.
+
+This branch contains my tests for changes to flashlight pp.
+
+Opening gui.py will allow you to pick a map and return current pp and pp with my proposed flashlight change.
+
+Opening profile_gui.py will allow you to recalculate a user's profile with my proposed flashlight changes. To choose a user, change the username in profile_gui.py (I am lazy!!!)
