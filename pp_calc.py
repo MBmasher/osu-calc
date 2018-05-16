@@ -102,9 +102,6 @@ def pp_calc(aim, speed, b, misses, c100, c50, used_mods=mods(), combo=0xFFFF, sc
 
     aim_value *= ar_bonus
 
-    if used_mods.hd:
-        aim_value *= 1.03
-
     acc_bonus = 0.5 + acc / 2.0
 
     od_bonus = 0.98 + math.pow(od, 2) / 2500.0
@@ -112,12 +109,23 @@ def pp_calc(aim, speed, b, misses, c100, c50, used_mods=mods(), combo=0xFFFF, sc
     aim_value *= acc_bonus
     aim_value *= od_bonus
 
-    old_aim_value = aim_value
+    no_hd_reb_aim_value = aim_value
     no_fl_aim_value = aim_value
+    no_ar_hd_aim_value = aim_value
+
+    if used_mods.hd:
+        no_hd_reb_aim_value = aim_value * 1.18
+        aim_value *= 1.02 + ((11 - ar) / 50.0)
+        no_fl_aim_value *= 1.02 + ((11 - ar) / 50.0)
+        no_ar_hd_aim_value *= 1.03
+
+    old_aim_value = aim_value
 
     if used_mods.fl:
         old_aim_value *= old_fl_bonus
         aim_value *= fl_bonus
+        no_hd_reb_aim_value *= old_fl_bonus
+        no_ar_hd_aim_value *= old_fl_bonus
 
     res.aim_pp = aim_value
 
@@ -128,6 +136,8 @@ def pp_calc(aim, speed, b, misses, c100, c50, used_mods=mods(), combo=0xFFFF, sc
     speed_value *= combo_break
     speed_value *= acc_bonus
     speed_value *= od_bonus
+
+    no_hd_reb_speed_value = speed_value
 
     if used_mods.hd:
         speed_value *= 1.18
@@ -173,7 +183,15 @@ def pp_calc(aim, speed, b, misses, c100, c50, used_mods=mods(), combo=0xFFFF, sc
     no_fl_pp = math.pow(math.pow(no_fl_aim_value, 1.1) + math.pow(speed_value, 1.1) + math.pow(acc_value, 1.1),
                         1.0 / 1.1) * final_multiplier
 
-    return res, aim_value, speed_value, acc_value, fl_bonus, old_fl_bonus, old_pp, no_fl_pp
+    no_hd_reb = math.pow(
+        math.pow(no_hd_reb_aim_value, 1.1) + math.pow(no_hd_reb_speed_value, 1.1) + math.pow(acc_value, 1.1),
+        1.0 / 1.1) * final_multiplier
+
+    no_ar_hd = math.pow(
+        math.pow(no_ar_hd_aim_value, 1.1) + math.pow(speed_value, 1.1) + math.pow(acc_value, 1.1),
+        1.0 / 1.1) * final_multiplier
+
+    return res, aim_value, speed_value, acc_value, fl_bonus, old_fl_bonus, old_pp, no_fl_pp, no_hd_reb, no_ar_hd
 
 
 def pp_calc_acc(aim, speed, b, acc_percent, used_mods=mods(), combo=0xFFFF, misses=0, score_version=1):
