@@ -93,45 +93,39 @@ mod = mods()
 
 
 def set_mods(mod, m):
-    if m == "NF":
+    if m & 0b1:
         mod.nf = 1
-    if m == "EZ":
+    if m & 0b10:
         mod.ez = 1
-    if m == "HD":
+    if m & 0b1000:
         mod.hd = 1
-    if m == "HR":
+    if m & 0b10000:
         mod.hr = 1
-    if m == "DT":
+    if m & 0b1000000:
         mod.dt = 1
-    if m == "HT":
+    if m & 0b100000000:
         mod.ht = 1
-    if m == "NC":
+    if m & 0b1000000000:
         mod.nc = 1
-    if m == "FL":
+        mod.dt = 0
+    if m & 0b10000000000:
         mod.fl = 1
-    if m == "SO":
+    if m & 0b100000000000:
         mod.so = 1
 
 
-def return_values(c100_s, c50_s, misses_s, combo_s, file_name, mod_s):
+def return_values(c100, c50, misses, combo, map_id, mod_s):
     global key
     try:
         if key == "":
             print("Please enter an API key to use this feature.")
             raise ()
-        file = requests.get(b_info.main(file_name, key)).text.splitlines()
+        file = requests.get("https://osu.ppy.sh/osu/{}".format(map_id)).text.splitlines()
     except:
         print("ERROR: " + file_name + " not a valid beatmap or API key is incorrect")
         sys.exit(1)
 
     map = Beatmap(file)
-
-    if combo_s == "":
-        combo = map.max_combo
-    else:
-        combo = int(combo_s)
-
-    mod_s = mod_s.upper()
 
     mod.dt = 0
     mod.ez = 0
@@ -143,26 +137,9 @@ def return_values(c100_s, c50_s, misses_s, combo_s, file_name, mod_s):
     mod.nf = 0
     mod.so = 0
 
-    if mod_s != "":
-        mod_s = [mod_s[i:i + 2] for i in range(0, len(mod_s), 2)]
-        for m in mod_s:
-            set_mods(mod, m)
-            mod.update()
-
-    if c100_s == "":
-        c100 = 0
-    else:
-        c100 = int(c100_s)
-
-    if c50_s == "":
-        c50 = 0
-    else:
-        c50 = int(c50_s)
-
-    if misses_s == "":
-        misses = 0
-    else:
-        misses = int(misses_s)
+    if mod_s != 0:
+        set_mods(mod, mod_s)
+        mod.update()
 
     mod_string = mod_str(mod)
     map.apply_mods(mod)
@@ -177,7 +154,7 @@ def return_values(c100_s, c50_s, misses_s, combo_s, file_name, mod_s):
     title = map.artist + " - " + map.title + "[" + map.version + "]"
     if mod_string != "":
         title += "+" + mod_string
-    title += " (" + map.creator + ")\n"
+    title += " (" + map.creator + ")"
     map_s = "Map: {}\n".format(title)
     difficulty_settings = "AR: {:.2f} CS: {:.2f} OD: {:.2f}\n".format(map.ar, map.cs, map.od)
     stars = "Stars: {:.2f}\n".format(diff[2])
@@ -199,6 +176,4 @@ def return_values(c100_s, c50_s, misses_s, combo_s, file_name, mod_s):
     no_hd_reb_pp_s = "No HD Rebalance Performance: {:.2f}PP\n".format(no_hd_reb)
     no_ar_hd_pp_s = "No HD AR Rebalance Performance: {:.2f}PP".format(no_ar_hd)
 
-    return (map_s + difficulty_settings + stars + acc + circle_s + slider_s + spinner_s + object_s
-            + comb_s + miss_s + aim_vs + speed_vs + acc_vs + fl_bs + old_fl_bs + pp_s + old_pp_s + no_fl_pp_s
-            + no_hd_reb_pp_s + no_ar_hd_pp_s)
+    return (str(title), pp.pp)
