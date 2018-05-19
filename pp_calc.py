@@ -79,11 +79,6 @@ def pp_calc(aim, speed, b, misses, c100, c50, used_mods=mods(), combo=0xFFFF, sc
 
     combo_break = math.pow(combo, 0.8) / math.pow(b.max_combo, 0.8)
 
-    fl_bonus = (1 + 0.35 * min(1.0, total_hits / 250.0)
-                + 0.3 * (min((total_hits - 250) / 250.0, 1.0) if total_hits > 250 else 0)
-                + ((total_hits - 500) / 1200.0 if total_hits > 500 else 0))
-    old_fl_bonus = 1.45 * length_bonus
-
     aim_value *= length_bonus
     aim_value *= miss_penalty
     aim_value *= combo_break
@@ -103,7 +98,10 @@ def pp_calc(aim, speed, b, misses, c100, c50, used_mods=mods(), combo=0xFFFF, sc
     aim_value *= ar_bonus
 
     if used_mods.hd:
-        aim_value *= 1.03
+        aim_value *= 1.02 + (11 - ar) / 50
+
+    if used_mods.fl:
+        aim_value *= 1.45 * length_bonus
 
     acc_bonus = 0.5 + acc / 2.0
 
@@ -111,13 +109,6 @@ def pp_calc(aim, speed, b, misses, c100, c50, used_mods=mods(), combo=0xFFFF, sc
 
     aim_value *= acc_bonus
     aim_value *= od_bonus
-
-    old_aim_value = aim_value
-    no_fl_aim_value = aim_value
-
-    if used_mods.fl:
-        old_aim_value *= old_fl_bonus
-        aim_value *= fl_bonus
 
     res.aim_pp = aim_value
 
@@ -163,17 +154,9 @@ def pp_calc(aim, speed, b, misses, c100, c50, used_mods=mods(), combo=0xFFFF, sc
 
     if used_mods.so:
         final_multiplier *= 0.95
-
     res.pp = math.pow(math.pow(aim_value, 1.1) + math.pow(speed_value, 1.1) + math.pow(acc_value, 1.1),
                       1.0 / 1.1) * final_multiplier
-
-    old_pp = math.pow(math.pow(old_aim_value, 1.1) + math.pow(speed_value, 1.1) + math.pow(acc_value, 1.1),
-                      1.0 / 1.1) * final_multiplier
-
-    no_fl_pp = math.pow(math.pow(no_fl_aim_value, 1.1) + math.pow(speed_value, 1.1) + math.pow(acc_value, 1.1),
-                        1.0 / 1.1) * final_multiplier
-
-    return res, aim_value, speed_value, acc_value, fl_bonus, old_fl_bonus, old_pp, no_fl_pp
+    return res, aim_value, speed_value, acc_value
 
 
 def pp_calc_acc(aim, speed, b, acc_percent, used_mods=mods(), combo=0xFFFF, misses=0, score_version=1):
